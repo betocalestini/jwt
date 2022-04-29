@@ -1,0 +1,96 @@
+version: '3'
+
+services:
+   redis:
+      image: redis:alpine
+      container_name: 'redis'
+      command: redis-server #--requirepass admin
+      ports:
+         - '6379:6379'
+
+      # volumes:
+      #    # - $PWD/redis:/var/lib/redis
+      #    - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
+
+      # environment:
+      #    - REDIS_REPLICATION_MODE=master
+      networks:
+         - rede1
+      restart: always
+
+   # nginx:
+   #    image: nginx:1.21.5
+   #    container_name: nginx
+   #    restart: always
+   #    ports:
+   #       - '80:80'
+   #       - '443:443'
+   #    volumes:
+   #       - ./client:/usr/share/nginx/html
+   #       - ./nginx:/etc/nginx
+   #       - ./cert:/cert
+   #    networks:
+   #       - rede1
+
+   db:
+      image: mysql:8.0.27
+      container_name: mysql
+      restart: always
+      volumes:
+         - /home/betocalestini/mysqldb:/var/lib/mysql
+      environment:
+         - MYSQL_ROOT_PASSWORD=admin
+         - TZ=America/Sao_Paulo
+      ports:
+         - 3307:3306
+      networks:
+         - rede1
+
+   redisinsight:
+      container_name: redis-insight
+      image: redislabs/redisinsight:latest
+      ports:
+         - 8001:8001
+      restart: always
+      networks:
+         - rede1
+
+networks:
+   rede1:
+      name: rede1
+      driver: bridge
+   # app1:
+   #    build: .
+   #    container_name: app1
+   #    restart: always
+   #    command: npm start
+   #    ports:
+   #       - '81:3000'
+   #    volumes:
+   #       - .:/usr/app
+   #    networks:
+   #       - rede1
+
+   # app2:
+   #    build: .
+   #    container_name: app2
+   #    restart: always
+   #    command: npm start
+   #    ports:
+   #       - '82:3000'
+   #    volumes:
+   #       - .:/usr/app
+   #    networks:
+   #       - rede1
+
+   # app3:
+   #    build: .
+   #    container_name: app3
+   #    restart: always
+   #    command: npm start
+   #    ports:
+   #       - '83:3000'
+   #    volumes:
+   #       - .:/usr/app
+   #    networks:
+   #       - rede1
